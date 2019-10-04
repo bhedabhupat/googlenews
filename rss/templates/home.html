@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Google News
+{% endblock title %}
+
+{% block style %}
+<style>
+  table thead{
+    background: linear-gradient(245deg,#ef724d,#9b000d);
+    color:#FFFFFF;
+  }
+
+  table tbody{
+    background: linear-gradient(to right, rgb(255, 255, 255), rgb(240, 241, 242), rgb(240, 241, 242), rgb(255, 255, 255));
+  }
+
+  .highlight{
+    background: linear-gradient(245deg,#ef724d,#9b000d);
+    color:#FFFFFF !important;
+    font-weight: bold;
+  }
+
+  .fa{
+    color:black;
+    font-weight: 100;
+  }
+
+  .search-text{
+    border: #DFDFDF solid 1px;
+    border-radius: 5px;
+    height: 40px;
+  }
+
+  .m-top-20{
+    margin-top:20px;
+  }
+
+  th a,
+td a { 
+	display: block;
+	width: 100%;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+th a:hover, td a:hover{
+  text-decoration: none;
+  color: #FFFFFF;
+}
+th a.sort-by { 
+	padding-right: 18px;
+	position: relative;
+}
+a.sort-by:before,
+a.sort-by:after {
+	border: 4px solid transparent;
+	content: "";
+	display: block;
+	height: 0;
+	right: 5px;
+	top: 50%;
+	position: absolute;
+	width: 0;
+}
+a.sort-by:before {
+	border-bottom-color: #ffffff;
+	margin-top: -9px;
+}
+a.sort-by:after {
+	border-top-color: #ffffff;
+	margin-top: 1px;
+}
+
+</style>
+{% endblock style %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-4">
+      <input type="text" class="col-md-12 pull-right search-text m-top-20" id="search-box" name="search" placeholder="Search" />
+    </div>
+  </div>
+  <div id="rss-form-list"></div>
+  
+{% endblock content %}
+
+{% block js %}
+<script>
+  $(document).ready(function(){
+      page = 1;
+      num = "?page="+page;
+      getrssList(num)
+      search = ""
+
+      $(document).on('keyup','#search-box', function(e){
+        e.preventDefault();
+        search = $(this).val();
+        num = "?page="+page+'&search='+search;
+        getrssList(num);
+      });
+  });
+
+  $(document).on('click','.sorting',function(){
+      columnName = $(this).data('value');
+      sortType = $(this).data('type');
+      console.log(columnName + sortType);
+      num = "?page=" + page + '&search=' + search + '&sorttype=' + columnName;
+      getrssList(num);
+  });
+
+  $('.page-link').click(function(e){
+    e.preventDefault();
+    page = ($(this)[0].href.split('page=')[1]);
+    num = "?page="+page;
+    getrssList(num);
+  }); 
+
+  $(document).ajaxStop(function(){
+    $('.page-link').click(function(e){
+      e.preventDefault();
+      page = ($(this)[0].href.split('page=')[1]);
+      num = "?page="+page;
+      getrssList(num);
+    });
+  });
+  function getrssList(query_string){
+    $.ajax({
+        type: "GET",
+        url: "list"+query_string,
+        success:function(data){
+          $('#rss-form-list').html(data);
+        }
+    });
+  }
+</script>
+{% endblock %}
