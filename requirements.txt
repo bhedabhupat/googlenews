@@ -5,7 +5,7 @@ celery==4.3.0
 cffi==1.12.3
 Django==2.2.8
 dnspython==1.16.0
-eventlet==0.25.1
+eventlet==0.31.0
 feedparser==5.2.1
 gevent==1.4.0
 greenlet==0.4.15
